@@ -32,8 +32,8 @@ private :
    Pos p_pos;
 
    bit_t p_bit[Piece_Size];
-   int p_square[Square_Size];
-   int p_trit[Square_Size];
+   int p_square[Square_Size_Max];
+   int p_trit[Square_Size_Max];
 
    uint64 p_key;
    int p_pip;

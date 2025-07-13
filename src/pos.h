@@ -14,19 +14,17 @@
 
 // constants
 
-const int Square_Size = 66;
+const int Square_Size_Max = 66;
+extern int Square_Size;
+extern int Square_Count;
 const int Dir_Size = 4;
 const int Side_Size = 2;
 const int Piece_Size = 4; // excludes empty #
 
 enum dir_t { NW, NE, SW, SE };
 
-enum inc_t {
-   NW_Inc = -6,
-   NE_Inc = -5,
-   SW_Inc = +5,
-   SE_Inc = +6
-};
+// increments (NW, NE, SW, SE) depend on the board variant
+extern int Inc[Dir_Size];
 
 enum side_t { White, Black };
 
@@ -34,13 +32,12 @@ enum piece_t { WM, WK, BM, BK, Empty, Frame };
 
 // "constants"
 
-extern const int Square_From_50[50];
-extern const int Square_To_50[Square_Size];
+extern int Square_From_50[50];
+extern int Square_To_50[Square_Size_Max];
 
-extern const int Square_File[Square_Size];
-extern const int Square_Rank[Square_Size];
-
-extern const int Inc[Dir_Size];
+extern int Square_File[Square_Size_Max];
+extern int Square_Rank[Square_Size_Max];
+extern int Inc[Dir_Size];
 
 // functions
 
@@ -89,6 +86,8 @@ extern std::string square_to_string   (int sq);
 extern bool        string_is_square   (const std::string & s);
 extern int         square_from_string (const std::string & s);
 extern int         square_from_int    (int sq);
+
+extern void pos_init_geometry();
 
 inline bool piece_is_ok     (int pc)         { return pc >= 0 && pc < Piece_Size; }
 inline int  piece_man       (int sd)         { return sd << 1; }

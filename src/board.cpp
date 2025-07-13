@@ -17,6 +17,7 @@
 #include "move.h"
 #include "move_gen.h"
 #include "pos.h"
+#include "var.h"
 
 // constants
 
@@ -46,9 +47,11 @@ static int piece_trit (int pc);
 
 void board_init() {
 
+   pos_init_geometry();
+
    for (int pc = 0; pc < Piece_Size; pc++) {
 
-      for (int i = 0; i < 50; i++) {
+      for (int i = 0; i < Square_Count; i++) {
 
          int sq = square_from_50(i);
 
@@ -72,7 +75,7 @@ Board::Board() {
 
 void Board::init() {
 
-   board_from_fen(*this, Start_FEN);
+   board_from_fen(*this, start_fen());
 }
 
 void Board::copy(const Board & bd) {
@@ -89,7 +92,7 @@ void Board::from_bit(int turn, bit_t wm, bit_t bm, bit_t wk, bit_t bk) {
 
    // p_pos.p_turn = 0;
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int sq = square_from_50(i);
 
@@ -389,7 +392,8 @@ int board_pip(const Board & bd) {
 
    int pip = 0;
 
-   for (int rk = 0; rk < 10; rk++) {
+   int n = (var::Variant == var::Brazilian) ? 4 : 5;
+   for (int rk = 0; rk < 2 * n; rk++) {
 
       bit_t rank = bit_rank(rk);
 
@@ -408,8 +412,8 @@ int board_skew(const Board & bd, int sd) {
    bit_t bm = bd.bit_man(sd);
 
    int skew = 0;
-
-   for (int fl = 0; fl < 10; fl++) {
+   int n = (var::Variant == var::Brazilian) ? 4 : 5;
+   for (int fl = 0; fl < 2 * n; fl++) {
       skew += bit_count(bm & bit_file(fl)) * (fl * 2 - 9);
    }
 
@@ -427,13 +431,14 @@ double board_phase(const Board & bd) {
 
 void board_disp(const Board & bd) {
 
-   for (int y = 0; y < 10; y++) {
+   int n = (var::Variant == var::Brazilian) ? 4 : 5;
+   for (int y = 0; y < 2 * n; y++) {
 
       if (y % 2 == 0) std::printf("  ");
 
-      for (int x = 0; x < 5; x++) {
+      for (int x = 0; x < n; x++) {
 
-         int sq = square_from_50(y * 5 + x);
+         int sq = square_from_50(y * n + x);
 
          switch (bd.square(sq)) {
          case WM :    std::printf("O   "); break;
@@ -445,8 +450,8 @@ void board_disp(const Board & bd) {
          }
       }
 
-      for (int x = 0; x < 5; x++) {
-         std::printf("  %02d", y * 5 + x + 1);
+      for (int x = 0; x < n; x++) {
+         std::printf("  %02d", y * n + x + 1);
       }
 
       std::printf("\n");

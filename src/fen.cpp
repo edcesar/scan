@@ -9,6 +9,7 @@
 #include "fen.h"
 #include "libmy.hpp"
 #include "pos.h"
+#include "var.h"
 #include "util.h"
 
 // prototypes
@@ -19,6 +20,10 @@ static void add_piece  (bit_t & bm, bit_t & bk, int sq, bool king);
 static std::string pos_pieces (const Pos & pos, int sd);
 
 static std::string run_string (int pc, int sq, int len);
+
+const std::string & start_fen() {
+   return (var::Variant == var::Brazilian) ? Start_FEN_Brazilian : Start_FEN_International;
+}
 
 // functions
 
@@ -127,7 +132,7 @@ static void add_pieces(bit_t & bm, bit_t & bk, Scanner_Number & scan) {
 
 static void add_piece(bit_t & bm, bit_t & bk, int sq, bool king) {
 
-   assert(sq >= 1 && sq <= 50);
+   assert(sq >= 1 && sq <= Square_Count);
 
    sq = square_from_50(sq - 1);
 
@@ -140,7 +145,7 @@ static void add_piece(bit_t & bm, bit_t & bk, int sq, bool king) {
 
 void pos_from_hub(Pos & pos, const std::string & s) {
 
-   if (s.size() != 51) throw Bad_Input();
+   if (s.size() != Square_Count + 1) throw Bad_Input();
 
    // turn
 
@@ -156,7 +161,7 @@ void pos_from_hub(Pos & pos, const std::string & s) {
 
    bit_t wm = 0, bm = 0, wk = 0, bk = 0;
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int sq = square_from_50(i);
 
@@ -177,7 +182,7 @@ void pos_from_hub(Pos & pos, const std::string & s) {
 
 void pos_from_dxp(Pos & pos, const std::string & s) {
 
-   if (s.size() != 51) throw Bad_Input();
+   if (s.size() != Square_Count + 1) throw Bad_Input();
 
    // turn
 
@@ -193,7 +198,7 @@ void pos_from_dxp(Pos & pos, const std::string & s) {
 
    bit_t wm = 0, bm = 0, wk = 0, bk = 0;
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int sq = square_from_50(i);
 
@@ -235,7 +240,7 @@ static std::string pos_pieces(const Pos & pos, int sd) {
    int run_sq = 0;
    int run_len = 0;
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int sq = square_from_50(i);
       int pc = pos_square(pos, sq);
@@ -277,7 +282,7 @@ static std::string run_string(int pc, int sq, int len) {
 
    assert(piece_is_ok(pc));
    assert(len != 0);
-   assert(sq + len <= 50);
+   assert(sq + len <= Square_Count);
 
    std::string s;
 
@@ -304,7 +309,7 @@ std::string pos_hub(const Pos & pos) {
 
    s += (pos.turn() == White) ? "w" : "b";
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int sq = square_from_50(i);
 
@@ -327,7 +332,7 @@ std::string pos_dxp(const Pos & pos) {
 
    s += (pos.turn() == White) ? "W" : "Z";
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int sq = square_from_50(i);
 

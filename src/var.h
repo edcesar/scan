@@ -12,6 +12,10 @@
 
 namespace var {
 
+// types
+enum variant_t { International, Brazilian };
+
+
 // variables
 
 extern bool Book;
@@ -30,6 +34,7 @@ extern int  DXP_Time;
 extern int  DXP_Moves;
 extern bool DXP_Board;
 extern bool DXP_Search;
+extern variant_t Variant;
 
 // functions
 

@@ -16,7 +16,7 @@ typedef uint64 bit_t;
 
 // constants
 
-const bit_t Bit_Squares = U64(0x0FFDFFBFF7FEFFC0); // legal squares
+extern bit_t Bit_Squares; // legal squares, set per variant
 
 // functions
 

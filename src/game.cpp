@@ -19,12 +19,12 @@
 
 void Game::clear() {
 
-   init(Start_FEN);
+   init(start_fen());
 }
 
 void Game::clear(int moves, double time, double inc) {
 
-   init(Start_FEN, moves, time, inc);
+   init(start_fen(), moves, time, inc);
 }
 
 void Game::init(const std::string & fen) {

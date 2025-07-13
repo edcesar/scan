@@ -14,9 +14,11 @@
 static bit_t Bit_File[10];
 static bit_t Bit_Rank[10];
 
-static bit_t King_One[Square_Size];
-static bit_t King_Almost[Square_Size];
-static bit_t King_All[Square_Size];
+bit_t Bit_Squares;
+
+static bit_t King_One[Square_Size_Max];
+static bit_t King_Almost[Square_Size_Max];
+static bit_t King_All[Square_Size_Max];
 
 static bit_t Beyond[64][64];
 static bit_t Between[64][64];
@@ -39,13 +41,22 @@ void bit_init() {
 
    // board lines
 
-   for (int i = 0; i < 5; i++) {
+   for (int i = 0; i < 10; i++) {
+      Bit_File[i] = 0;
+      Bit_Rank[i] = 0;
+   }
 
-      Bit_File[i * 2 + 0] = bit_5(i + 11, 11);
-      Bit_File[i * 2 + 1] = bit_5(i +  6, 11);
+   for (int i = 0; i < Square_Count; i++) {
+      int sq = square_from_50(i);
+      int fl = square_file(sq);
+      int rk = square_rank(sq);
+      if (fl >= 0 && fl < 10) bit_set(Bit_File[fl], sq);
+      if (rk >= 0 && rk < 10) bit_set(Bit_Rank[rk], sq);
+   }
 
-      Bit_Rank[i * 2 + 0] = bit_5(i * 11 +  6, 1);
-      Bit_Rank[i * 2 + 1] = bit_5(i * 11 + 11, 1);
+   Bit_Squares = 0;
+   for (int i = 0; i < Square_Count; i++) {
+      bit_set(Bit_Squares, square_from_50(i));
    }
 
    // king attacks
@@ -58,7 +69,7 @@ void bit_init() {
       }
    }
 
-   for (int i = 0; i < 50; i++) {
+   for (int i = 0; i < Square_Count; i++) {
 
       int from = square_from_50(i);
 
