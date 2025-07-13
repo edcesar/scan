@@ -47,6 +47,31 @@ const int Square_To_50[Square_Size] = {
      -1, -1, -1, -1, -1,
 };
 
+const int Square_From_32[32] = {
+   12, 13, 14, 15,
+   17, 18, 19, 20,
+   23, 24, 25, 26,
+   28, 29, 30, 31,
+   34, 35, 36, 37,
+   39, 40, 41, 42,
+   45, 46, 47, 48,
+   50, 51, 52, 53,
+};
+
+const int Square_To_32[Square_Size] = {
+   -1, -1, -1, -1, -1, -1,
+   -1, -1, -1, -1, -1, -1,
+    0,  1,  2,  3, -1,  4,
+    5,  6,  7, -1, -1,  8,
+    9, 10, 11, -1, 12, 13,
+   14, 15, -1, -1, 16, 17,
+   18, 19, -1, 20, 21, 22,
+   23, -1, -1, 24, 25, 26,
+   27, -1, 28, 29, 30, 31,
+   -1, -1, -1, -1, -1, -1,
+   -1, -1, -1, -1, -1, -1,
+};
+
 const int Square_File[Square_Size] = {
    -1, -1, -1, -1, -1, -1,
       1,  3,  5,  7,  9,
@@ -85,7 +110,11 @@ const int Inc[Dir_Size] = {
 
 std::string square_to_string(int sq) {
 
-   return ml::itos(square_to_50(sq) + 1);
+   if (var::Brazilian) {
+      return ml::itos(square_to_32(sq) + 1);
+   } else {
+      return ml::itos(square_to_50(sq) + 1);
+   }
 }
 
 bool string_is_square(const std::string & s) {
@@ -93,7 +122,11 @@ bool string_is_square(const std::string & s) {
    if (!string_is_nat(s)) return false;
 
    int sq = ml::stoi(s);
-   return sq >= 1 && sq <= 50;
+   if (var::Brazilian) {
+      return sq >= 1 && sq <= 32;
+   } else {
+      return sq >= 1 && sq <= 50;
+   }
 }
 
 int square_from_string(const std::string & s) {
@@ -104,8 +137,13 @@ int square_from_string(const std::string & s) {
 
 int square_from_int(int sq) {
 
-   if (sq < 1 || sq > 50) throw Bad_Input();
-   return square_from_50(sq - 1);
+   if (var::Brazilian) {
+      if (sq < 1 || sq > 32) throw Bad_Input();
+      return square_from_32(sq - 1);
+   } else {
+      if (sq < 1 || sq > 50) throw Bad_Input();
+      return square_from_50(sq - 1);
+   }
 }
 
 void Pos::copy(const Pos & pos) {
@@ -115,7 +153,7 @@ void Pos::copy(const Pos & pos) {
 
 void Pos::init() {
 
-   pos_from_fen(*this, Start_FEN);
+   pos_from_fen(*this, var::Brazilian ? Start_FEN_Brazilian : Start_FEN);
 }
 
 void Pos::init(int turn, bit_t wp, bit_t bp, bit_t k) {
