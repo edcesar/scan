@@ -13,11 +13,12 @@
 class Pos;
 
 // constants
+const std::string Start_FEN_International = "W:W31-50:B1-20";
+const std::string Start_FEN_Brazilian    = "W:W21-32:B1-12";
+const std::string Start_Hub = "wbbbbbbbbbbbbbbbbbbbbeeeeeeeeeewwwwwwwwwwwwwwwwwww";
+const std::string Start_DXP = "Wzzzzzzzzzzzzzzzzzzzzeeeeeeeeeewwwwwwwwwwwwwwwwwww";
 
-const std::string Start_FEN = "W:W31-50:B1-20";
-const std::string Start_Hub = "wbbbbbbbbbbbbbbbbbbbbeeeeeeeeeewwwwwwwwwwwwwwwwwwww";
-const std::string Start_DXP = "Wzzzzzzzzzzzzzzzzzzzzeeeeeeeeeewwwwwwwwwwwwwwwwwwww";
-
+const std::string & start_fen();
 // functions
 
 extern void pos_from_fen (Pos & pos, const std::string & s);

@@ -43,7 +43,7 @@ private :
    double p_time;
 
    move_t user_move ();
-   void   new_game  (const std::string & fen = Start_FEN);
+   void   new_game  (const std::string & fen = Start_FEN_International);
    void   go_to     (int pos);
 
 public :
@@ -329,7 +329,7 @@ void Terminal::loop() {
 
    const Board & bd = game.board();
 
-   new_game();
+   new_game(start_fen());
 
    while (true) {
 
@@ -462,7 +462,7 @@ move_t Terminal::user_move() {
 
    } else if (command == "n") {
 
-      new_game();
+      new_game(start_fen());
 
    } else if (command == "q") {
 

@@ -32,6 +32,7 @@ int  DXP_Time;
 int  DXP_Moves;
 bool DXP_Board;
 bool DXP_Search;
+variant_t Variant;
 
 static std::map<std::string, std::string> Var;
 
@@ -53,6 +54,7 @@ void init() {
    set("dxp-moves", "75");
    set("dxp-board", "false");
    set("dxp-search", "false");
+   set("variant", "international");
 
    update();
 }
@@ -108,6 +110,16 @@ void update() {
    DXP_Moves     = get_int("dxp-moves");
    DXP_Board     = get_bool("dxp-board");
    DXP_Search    = get_bool("dxp-search");
+
+   std::string var_str = get("variant");
+   if (var_str == "international") {
+      Variant = International;
+   } else if (var_str == "brazilian") {
+      Variant = Brazilian;
+   } else {
+      std::cerr << "unknown variant: " << var_str << std::endl;
+      std::exit(EXIT_FAILURE);
+   }
 }
 
 std::string get(const std::string & name) {

@@ -33,7 +33,7 @@ void hash_init() {
    Turn_Key = Random_64[0];
 
    for (int pc = 0; pc < Piece_Size; pc++) {
-      for (int i = 0; i < 50; i++) {
+      for (int i = 0; i < Square_Count; i++) {
          int sq = square_from_50(i);
          Piece_Key[pc][sq] = Random_64[i * 4 + pc + 1];
       }

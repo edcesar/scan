@@ -17,69 +17,58 @@
 #include "util.h"
 #include "var.h"
 
-// "constants"
+// geometry variables (initialised according to variant)
+int Square_Size = 66;
+int Square_Count = 50;
+int Square_From_50[50];
+int Square_To_50[Square_Size_Max];
+int Square_File[Square_Size_Max];
+int Square_Rank[Square_Size_Max];
+int Inc[Dir_Size];
 
-const int Square_From_50[50] = {
-      6,  7,  8,  9, 10,
-   11, 12, 13, 14, 15,
-     17, 18, 19, 20, 21,
-   22, 23, 24, 25, 26,
-     28, 29, 30, 31, 32,
-   33, 34, 35, 36, 37,
-     39, 40, 41, 42, 43,
-   44, 45, 46, 47, 48,
-     50, 51, 52, 53, 54,
-   55, 56, 57, 58, 59,
-};
+void pos_init_geometry() {
 
-const int Square_To_50[Square_Size] = {
-   -1, -1, -1, -1, -1, -1,
-      0,  1,  2,  3,  4,
-    5,  6,  7,  8,  9, -1,
-     10, 11, 12, 13, 14,
-   15, 16, 17, 18, 19, -1,
-     20, 21, 22, 23, 24,
-   25, 26, 27, 28, 29, -1,
-     30, 31, 32, 33, 34,
-   35, 36, 37, 38, 39, -1,
-     40, 41, 42, 43, 44,
-   45, 46, 47, 48, 49, -1,
-     -1, -1, -1, -1, -1,
-};
+   int n = (var::Variant == var::Brazilian) ? 4 : 5;
+   Square_Count = 2 * n * n;
+   int W = 2 * n + 1;
+   Square_Size = W * (n + 1);
 
-const int Square_File[Square_Size] = {
-   -1, -1, -1, -1, -1, -1,
-      1,  3,  5,  7,  9,
-    0,  2,  4,  6,  8, -1,
-      1,  3,  5,  7,  9,
-    0,  2,  4,  6,  8, -1,
-      1,  3,  5,  7,  9,
-    0,  2,  4,  6,  8, -1,
-      1,  3,  5,  7,  9,
-    0,  2,  4,  6,  8, -1,
-      1,  3,  5,  7,  9,
-    0,  2,  4,  6,  8, -1,
-     -1, -1, -1, -1, -1,
-};
+   // init arrays
+   for (int i = 0; i < 50; i++) Square_From_50[i] = -1;
+   for (int i = 0; i < Square_Size_Max; i++) {
+      Square_To_50[i] = -1;
+      Square_File[i] = -1;
+      Square_Rank[i] = -1;
+   }
 
-const int Square_Rank[Square_Size] = {
-   -1, -1, -1, -1, -1, -1,
-      0,  0,  0,  0,  0,
-    1,  1,  1,  1,  1, -1,
-      2,  2,  2,  2,  2,
-    3,  3,  3,  3,  3, -1,
-      4,  4,  4,  4,  4,
-    5,  5,  5,  5,  5, -1,
-      6,  6,  6,  6,  6,
-    7,  7,  7,  7,  7, -1,
-      8,  8,  8,  8,  8,
-    9,  9,  9,  9,  9, -1,
-     -1, -1, -1, -1, -1,
-};
+   int idx = 0;
+   for (int g = 0; g < n; g++) {
+      int rowA = n + 1 + g * W;
+      int rowB = rowA + n;
 
-const int Inc[Dir_Size] = {
-   NW_Inc, NE_Inc, SW_Inc, SE_Inc,
-};
+      for (int i = 0; i < n; i++) {
+         int sq = rowA + i;
+         Square_From_50[idx] = sq;
+         Square_To_50[sq] = idx;
+         Square_File[sq] = 2 * i + 1;
+         Square_Rank[sq] = 2 * g;
+         idx++;
+      }
+      for (int i = 0; i < n; i++) {
+         int sq = rowB + i;
+         Square_From_50[idx] = sq;
+         Square_To_50[sq] = idx;
+         Square_File[sq] = 2 * i;
+         Square_Rank[sq] = 2 * g + 1;
+         idx++;
+      }
+   }
+
+   Inc[NW] = -(n + 1);
+   Inc[NE] = -n;
+   Inc[SW] = +n;
+   Inc[SE] = +(n + 1);
+}
 
 // functions
 
@@ -93,7 +82,7 @@ bool string_is_square(const std::string & s) {
    if (!string_is_nat(s)) return false;
 
    int sq = ml::stoi(s);
-   return sq >= 1 && sq <= 50;
+   return sq >= 1 && sq <= Square_Count;
 }
 
 int square_from_string(const std::string & s) {
@@ -104,7 +93,7 @@ int square_from_string(const std::string & s) {
 
 int square_from_int(int sq) {
 
-   if (sq < 1 || sq > 50) throw Bad_Input();
+   if (sq < 1 || sq > Square_Count) throw Bad_Input();
    return square_from_50(sq - 1);
 }
 
@@ -115,7 +104,7 @@ void Pos::copy(const Pos & pos) {
 
 void Pos::init() {
 
-   pos_from_fen(*this, Start_FEN);
+   pos_from_fen(*this, start_fen());
 }
 
 void Pos::init(int turn, bit_t wp, bit_t bp, bit_t k) {
