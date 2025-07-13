@@ -26,6 +26,7 @@ extern int  SMP_Threads;
 extern int  Trans_Size;
 extern bool BB;
 extern int  BB_Size;
+extern std::string Variant;
 extern bool DXP_Server;
 extern std::string DXP_Host;
 extern int  DXP_Port;
