@@ -24,6 +24,7 @@ int  SMP_Threads;
 int  Trans_Size;
 bool BB;
 int  BB_Size;
+std::string Variant;
 bool DXP_Server;
 std::string DXP_Host;
 int  DXP_Port;
@@ -39,8 +40,9 @@ static std::map<std::string, std::string> Var;
 
 void init() {
 
-   set("book", "true");
+   set("book", "false");
    set("book-margin", "2");
+   set("variant", "brazilian");
    set("ponder", "false");
    set("threads", "1");
    set("tt-size", "24");
@@ -100,6 +102,7 @@ void update() {
    Trans_Size    = 1 << get_int("tt-size");
    BB_Size       = get_int("bb-size");
    BB            = BB_Size > 0;
+   Variant       = get("variant");
    DXP_Server    = get_bool("dxp-server");
    DXP_Host      = get("dxp-host");
    DXP_Port      = get_int("dxp-port");
