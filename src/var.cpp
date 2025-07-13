@@ -16,6 +16,10 @@ namespace var {
 
 // variables
 
+variant_t Variant = Variant_10x10;
+const int Board_Size[Variant_Size] = { 10, 8 };
+const int Pip_Max[Variant_Size] = { 300, 200 };
+
 bool Book;
 int  Book_Margin;
 bool Ponder;

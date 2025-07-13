@@ -12,9 +12,17 @@
 
 namespace var {
 
-// types
-enum variant_t { International, Brazilian };
+// variants
 
+enum variant_t {
+   Variant_10x10,
+   Variant_8x8,
+   Variant_Size
+};
+
+extern variant_t Variant;
+extern const int Board_Size[Variant_Size];
+extern const int Pip_Max[Variant_Size];
 
 // variables
 

@@ -17,10 +17,12 @@
 #include "libmy.hpp"
 #include "pos.h"
 #include "score.h"
+#include "var.h"
 
 // constants
 
-static const int P = 91910; // number of features
+static const int P_10 = 91910; // number of features for 10x10
+static const int P_8 = 6;     // simplified feature count for 8x8
 static const int Unit = 60; // units per cp
 
 // types
@@ -44,11 +46,16 @@ public :
 
 // variables
 
-static int Weight[P * 2];
+static int Weight_10[P_10 * 2];
+static int Weight_8[P_8 * 2];
+static int *Weight = nullptr;
+static int P = 0;
 
 // prototypes
 
 static void get_feature (Score_2 & s2, const Board & bd);
+static void get_feature_8 (Score_2 & s2, const Board & bd);
+static void get_feature_10(Score_2 & s2, const Board & bd);
 
 static void pst      (Score_2 & s2, int var, bit_t wb, bit_t bb);
 static void king_mob (Score_2 & s2, int var, const Pos & pos);
@@ -69,15 +76,25 @@ void eval_init() {
 
    std::cout << "init eval" << std::endl;
 
-   std::ifstream file("data/eval", std::ios::binary);
+   if (var::Variant == var::Variant_10x10) {
+      P = P_10;
+      Weight = Weight_10;
 
-   if (!file) {
-      std::cerr << "unable to open file \"data/eval\"" << std::endl;
-      std::exit(EXIT_FAILURE);
-   }
+      std::ifstream file("data/eval", std::ios::binary);
 
-   for (int i = 0; i < P * 2; i++) {
-      Weight[i] = int16(ml::get_bytes(file, 2)); // HACK: extend sign
+      if (!file) {
+         std::cerr << "unable to open file \"data/eval\"" << std::endl;
+         std::exit(EXIT_FAILURE);
+      }
+
+      for (int i = 0; i < P * 2; i++) {
+         Weight[i] = int16(ml::get_bytes(file, 2)); // HACK: extend sign
+      }
+
+   } else {
+      P = P_8;
+      Weight = Weight_8;
+      for (int i = 0; i < P * 2; i++) Weight[i] = 0;
    }
 }
 
@@ -91,9 +108,11 @@ int eval(const Board & bd) {
    // phase interpolation
 
    int pip = bd.pip();
-   assert(pip >= 0 && pip <= 300);
+   assert(pip >= 0 && pip <= var::Pip_Max[var::Variant]);
 
-   int sc = ml::div_round(s2.mg() * pip + s2.eg() * (300 - pip), Unit * 300);
+   int sc = ml::div_round(s2.mg() * pip +
+                          s2.eg() * (var::Pip_Max[var::Variant] - pip),
+                          Unit * var::Pip_Max[var::Variant]);
 
    // drawish material
 
@@ -128,6 +147,16 @@ int eval(const Board & bd) {
 }
 
 static void get_feature(Score_2 & s2, const Board & bd) {
+
+   if (var::Variant == var::Variant_8x8) {
+      get_feature_8(s2, bd);
+      return;
+   }
+
+   get_feature_10(s2, bd);
+}
+
+static void get_feature_10(Score_2 & s2, const Board & bd) {
 
    // init
 
@@ -165,6 +194,24 @@ static void get_feature(Score_2 & s2, const Board & bd) {
    // patterns
 
    pattern(s2, var, bd);
+}
+
+static void get_feature_8(Score_2 & s2, const Board & bd) {
+
+   int var = 0;
+
+   int wm = bd.size(WM);
+   int bm = bd.size(BM);
+   int wk = bd.size(WK);
+   int bk = bd.size(BK);
+
+   s2.add(var + 0, wm - bm); var++;
+   s2.add(var + 0, wk - bk); var++;
+   s2.add(var + 0, bd.pip()); var++;
+   s2.add(var + 0, balance(bd)); var++;
+   // two unused features keep array size
+   s2.add(var + 0, 0); var++;
+   s2.add(var + 0, 0);
 }
 
 static void pst(Score_2 & s2, int var, bit_t wb, bit_t bb) {
@@ -233,6 +280,8 @@ static void king_mob(Score_2 & s2, int var, const Pos & pos) {
 }
 
 static void pattern(Score_2 & s2, int var, const Board & bd) {
+
+   if (var::Variant == var::Variant_8x8) return;
 
    s2.add(var +  3280 + i8(bd,  6,  7, 11, 12, 17, 18, 22, 23), +1);
    s2.add(var +  3280 - i8(bd, 59, 58, 54, 53, 48, 47, 43, 42), -1);
