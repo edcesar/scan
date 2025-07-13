@@ -18,6 +18,7 @@
 #include "pos.h"
 #include "search.h"
 #include "socket.h"
+#include "var.h"
 #include "util.h" // for Bad_Input and Bad_Output
 #include "var.h"
 
@@ -399,7 +400,7 @@ static void update() { // TODO: pondering and time-out?
       int result;
       std::string comment = ml::itos(game.pos() / 2) + " moves played";
 
-      if (game.is_end(true)) { // always adjudicate using bitbases
+      if (var::Variant == var::Variant_10x10 && game.is_end(true)) { // always adjudicate using bitbases
 
          result = game.result(true);
          if (My_Side != White) result = -result;

@@ -433,7 +433,7 @@ move_t ponder_move(const Board & bd) {
 
 static void gen_moves_bb(List & list, const Pos & pos) {
 
-   if (var::BB && bb::pos_is_load(pos)) { // filter root moves using BB probes
+   if (var::BB && var::Variant == var::Variant_10x10 && bb::pos_is_load(pos)) { // filter root moves using BB probes
 
       list.clear();
 
@@ -1153,7 +1153,7 @@ int Search_Local::search(int alpha, int beta, int depth, bool prune, Line & pv) 
 
    // bitbases
 
-   if (var::BB && bb::pos_is_search(bd)) {
+   if (var::BB && var::Variant == var::Variant_10x10 && bb::pos_is_search(bd)) {
       local.score = qs(local.alpha, local.beta, local.pv);
       goto cont;
    }
@@ -1390,7 +1390,7 @@ int Search_Local::qs(int alpha, int beta, Line & pv) {
 
       // bitbases
 
-      if (var::BB && bb::pos_is_search(bd)) {
+      if (var::BB && var::Variant == var::Variant_10x10 && bb::pos_is_search(bd)) {
          mark_leaf();
          return probe_bb();
       }

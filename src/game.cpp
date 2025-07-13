@@ -14,6 +14,7 @@
 #include "libmy.hpp"
 #include "move.h"
 #include "pos.h"
+#include "var.h"
 
 // functions
 
@@ -121,7 +122,8 @@ bool Game::is_end(bool use_bb) const {
 
    const Board & bd = p_board;
 
-   return board_is_end(bd, 3) || (use_bb && bb::pos_is_game(bd));
+   return board_is_end(bd, 3) ||
+          (use_bb && var::Variant == var::Variant_10x10 && bb::pos_is_game(bd));
 }
 
 int Game::result(bool use_bb) const {
@@ -138,7 +140,7 @@ int Game::result(bool use_bb) const {
 
       return 0;
 
-   } else if (use_bb && bb::pos_is_game(bd)) {
+   } else if (use_bb && var::Variant == var::Variant_10x10 && bb::pos_is_game(bd)) {
 
       int val = bb::probe(bd);
 

@@ -17,6 +17,7 @@
 #include "move.h"
 #include "move_gen.h"
 #include "pos.h"
+#include "var.h"
 
 // constants
 
@@ -389,15 +390,15 @@ int board_pip(const Board & bd) {
 
    int pip = 0;
 
-   for (int rk = 0; rk < 10; rk++) {
+   for (int rk = 0; rk < var::Board_Size[var::Variant]; rk++) {
 
       bit_t rank = bit_rank(rk);
 
       pip += bit_count(bit_wm & rank) * rk;
-      pip += bit_count(bit_bm & rank) * (9 - rk);
+      pip += bit_count(bit_bm & rank) * ((var::Board_Size[var::Variant] - 1) - rk);
    }
 
-   assert(pip >= 0 && pip <= 300);
+   assert(pip >= 0 && pip <= var::Pip_Max[var::Variant]);
    return pip;
 }
 
@@ -409,8 +410,8 @@ int board_skew(const Board & bd, int sd) {
 
    int skew = 0;
 
-   for (int fl = 0; fl < 10; fl++) {
-      skew += bit_count(bm & bit_file(fl)) * (fl * 2 - 9);
+   for (int fl = 0; fl < var::Board_Size[var::Variant]; fl++) {
+      skew += bit_count(bm & bit_file(fl)) * (fl * 2 - (var::Board_Size[var::Variant] - 1));
    }
 
    assert(skew >= -120 && skew <= +120);
@@ -419,7 +420,8 @@ int board_skew(const Board & bd, int sd) {
 
 double board_phase(const Board & bd) {
 
-   double phase = double(300 - bd.pip()) / 300.0;
+   double phase = double(var::Pip_Max[var::Variant] - bd.pip()) /
+                  double(var::Pip_Max[var::Variant]);
 
    assert(phase >= 0.0 && phase <= 1.0);
    return phase;
@@ -427,11 +429,12 @@ double board_phase(const Board & bd) {
 
 void board_disp(const Board & bd) {
 
-   for (int y = 0; y < 10; y++) {
+   int bsize = var::Board_Size[var::Variant];
+   for (int y = 0; y < bsize; y++) {
 
       if (y % 2 == 0) std::printf("  ");
 
-      for (int x = 0; x < 5; x++) {
+      for (int x = 0; x < bsize / 2; x++) {
 
          int sq = square_from_50(y * 5 + x);
 
@@ -445,8 +448,8 @@ void board_disp(const Board & bd) {
          }
       }
 
-      for (int x = 0; x < 5; x++) {
-         std::printf("  %02d", y * 5 + x + 1);
+      for (int x = 0; x < bsize / 2; x++) {
+         std::printf("  %02d", y * (bsize / 2) + x + 1);
       }
 
       std::printf("\n");
@@ -476,7 +479,7 @@ void board_disp(const Board & bd) {
          std::cout << "black to play";
       }
 
-      if (bb::pos_is_game(bd)) {
+      if (var::Variant == var::Variant_10x10 && bb::pos_is_game(bd)) {
          int val = bb::probe(bd);
          std::cout << ", bitbase " << bb::value_to_string(val);
       }
@@ -488,12 +491,12 @@ void board_disp(const Board & bd) {
 
 static int square_pip(int sq, int sd) {
 
-   return 9 - square_rank(sq, sd);
+   return (var::Board_Size[var::Variant] - 1) - square_rank(sq, sd);
 }
 
 static int square_skew(int sq) {
 
-   return square_file(sq) * 2 - 9;
+   return square_file(sq) * 2 - (var::Board_Size[var::Variant] - 1);
 }
 
 static int piece_trit(int pc) {
