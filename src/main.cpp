@@ -329,7 +329,7 @@ void Terminal::loop() {
 
    const Board & bd = game.board();
 
-   new_game();
+   new_game(var::Brazilian ? Start_FEN_Brazilian : Start_FEN);
 
    while (true) {
 
@@ -462,7 +462,7 @@ move_t Terminal::user_move() {
 
    } else if (command == "n") {
 
-      new_game();
+      new_game(var::Brazilian ? Start_FEN_Brazilian : Start_FEN);
 
    } else if (command == "q") {
 

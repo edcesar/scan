@@ -10,6 +10,7 @@
 #include "libmy.hpp"
 #include "pos.h"
 #include "util.h"
+#include "var.h"
 
 // prototypes
 
@@ -127,9 +128,13 @@ static void add_pieces(bit_t & bm, bit_t & bk, Scanner_Number & scan) {
 
 static void add_piece(bit_t & bm, bit_t & bk, int sq, bool king) {
 
-   assert(sq >= 1 && sq <= 50);
-
-   sq = square_from_50(sq - 1);
+   if (var::Brazilian) {
+      assert(sq >= 1 && sq <= 32);
+      sq = square_from_32(sq - 1);
+   } else {
+      assert(sq >= 1 && sq <= 50);
+      sq = square_from_50(sq - 1);
+   }
 
    if (king) {
       bit_set(bk, sq);
@@ -235,9 +240,11 @@ static std::string pos_pieces(const Pos & pos, int sd) {
    int run_sq = 0;
    int run_len = 0;
 
-   for (int i = 0; i < 50; i++) {
+   int limit = var::Brazilian ? 32 : 50;
 
-      int sq = square_from_50(i);
+   for (int i = 0; i < limit; i++) {
+
+      int sq = var::Brazilian ? square_from_32(i) : square_from_50(i);
       int pc = pos_square(pos, sq);
 
       if (pc == run_pc) {
@@ -277,7 +284,7 @@ static std::string run_string(int pc, int sq, int len) {
 
    assert(piece_is_ok(pc));
    assert(len != 0);
-   assert(sq + len <= 50);
+   assert(sq + len <= (var::Brazilian ? 32 : 50));
 
    std::string s;
 

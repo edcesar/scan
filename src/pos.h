@@ -36,6 +36,8 @@ enum piece_t { WM, WK, BM, BK, Empty, Frame };
 
 extern const int Square_From_50[50];
 extern const int Square_To_50[Square_Size];
+extern const int Square_From_32[32];
+extern const int Square_To_32[Square_Size];
 
 extern const int Square_File[Square_Size];
 extern const int Square_Rank[Square_Size];
@@ -57,6 +59,8 @@ inline bool square_is_ok(int sq) {
 
 inline int square_from_50 (int sq) { return Square_From_50[sq]; }
 inline int square_to_50   (int sq) { return Square_To_50[sq]; }
+inline int square_from_32 (int sq) { return Square_From_32[sq]; }
+inline int square_to_32   (int sq) { return Square_To_32[sq]; }
 inline int square_file    (int sq) { return Square_File[sq]; }
 inline int square_rank    (int sq) { return Square_Rank[sq]; }
 inline int square_opp     (int sq) { return (Square_Size - 1) - sq; }

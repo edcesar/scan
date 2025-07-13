@@ -17,6 +17,7 @@
 #include "move.h"
 #include "move_gen.h"
 #include "pos.h"
+#include "var.h"
 
 // constants
 
@@ -72,7 +73,7 @@ Board::Board() {
 
 void Board::init() {
 
-   board_from_fen(*this, Start_FEN);
+   board_from_fen(*this, var::Brazilian ? Start_FEN_Brazilian : Start_FEN);
 }
 
 void Board::copy(const Board & bd) {

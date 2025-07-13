@@ -14,17 +14,18 @@
 #include "libmy.hpp"
 #include "move.h"
 #include "pos.h"
+#include "var.h"
 
 // functions
 
 void Game::clear() {
 
-   init(Start_FEN);
+   init(var::Brazilian ? Start_FEN_Brazilian : Start_FEN);
 }
 
 void Game::clear(int moves, double time, double inc) {
 
-   init(Start_FEN, moves, time, inc);
+   init(var::Brazilian ? Start_FEN_Brazilian : Start_FEN, moves, time, inc);
 }
 
 void Game::init(const std::string & fen) {
